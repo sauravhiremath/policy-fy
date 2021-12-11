@@ -1,0 +1,1 @@
+const lvl1 = ["apiVersion", "kind", "metadata", "spec"]

@@ -1,4 +1,4 @@
-function mergeJson(target) {
+function mergeJson(target: any) {
   for (var argi = 1; argi < arguments.length; argi++) {
     var source = arguments[argi];
     for (var key in source) {

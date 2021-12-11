@@ -1,0 +1,19 @@
+customRules:
+  - identifier: CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS
+    name: Ensure correct environment labels are used [CUSTOM RULE]
+    defaultMessageOnFailure: Use only approved environment labels (`prod`, `staging` and `test`)
+    schema:
+      properties:
+        metadata:
+          properties:
+            labels:
+              properties:
+                environment:
+                  enum:
+                    - prod
+                    - staging
+                    - test
+              required:
+                - environment
+          required:
+            - labels

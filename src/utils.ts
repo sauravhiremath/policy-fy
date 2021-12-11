@@ -1,4 +1,7 @@
-function mergeJson(target: any) {
+import fs from "fs";
+import yml from "js-yaml";
+
+export function mergeJson(target: any) {
   for (var argi = 1; argi < arguments.length; argi++) {
     var source = arguments[argi];
     for (var key in source) {
@@ -13,6 +16,12 @@ function mergeJson(target: any) {
   return target;
 }
 
-module.exports = {
-  mergeJson,
-};
+export function buildYaml(
+  ctx: Object,
+  filename: string,
+  basePath = __dirname + "/../dump"
+) {
+  const data = yml.dump(ctx);
+  fs.writeFileSync(`${basePath}/${filename}`, data);
+  return;
+}

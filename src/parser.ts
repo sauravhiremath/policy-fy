@@ -1,8 +1,10 @@
 import baselvl from "../schema/index.json";
 import metadataSchema from "../schema/metadata.json";
+import specSchema from "../schema/spec.json";
 const lvl1 = ["apiVersion", "kind", "metadata", "spec"];
 
 const METADATA_SCHEMA: any = metadataSchema;
+const SPEC_SCHEMA: any = specSchema;
 
 export const getBasePolicy = (ctx: any) => {
   const identifiers: Array<string> = ctx.customRules.map(
@@ -71,25 +73,78 @@ export function parser(doc: any) {
           for (const prop in metadataProperties) {
             for (const keyword of keywords.values()) {
               if (keyword?.key === prop) {
-                if (keyword?.type === "string") {
+                if (keyword?.type === "string" || keyword?.type === "integer") {
                   builder.push({
                     schemaConfig: {
-                      parents: ["metadata"],
+                      parents: [lvl1],
                       key: prop,
                       values:
                         typeof metadataProperties[prop] === "string"
                           ? [metadataProperties[prop]]
                           : metadataProperties[prop],
                     },
-                    identifier: `${lvl1.toUpperCase()}_${prop}_CHECK`,
-                    defaultMessageOnFailure: `Failed ${lvl1.toUpperCase()}_${prop}_CHECK\n${
+                    identifier: `${lvl1.toUpperCase()}_${prop.toUpperCase()}_CHECK`,
+                    defaultMessageOnFailure: `Failed ${lvl1.toUpperCase()}_${prop.toUpperCase()}_CHECK\n${
                       keyword.description &&
                       `Description: ${keyword.description}`
                     }`,
                   });
                 }
-                // Keeping only the first type of 'property' inside datree policy rules
-                break;
+                if (keyword.type)
+                  // Keeping only the first type of 'property' inside datree policy rules
+                  break;
+              }
+            }
+          }
+          for (const buildCtx of builder) {
+            const rule = {
+              identifier: buildCtx.identifier,
+              defaultMessageOnFailure: buildCtx.defaultMessageOnFailure,
+              schema: buildSchema(buildCtx.schemaConfig, [lvl1]),
+            };
+            policy.customRules.push(rule);
+          }
+          break;
+        }
+        case "spec": {
+          const keywords = Object.keys(specSchema).flatMap((key) => {
+            if (SPEC_SCHEMA[key].properties) {
+              const cache = [];
+              for (const propKey of Object.keys(SPEC_SCHEMA[key].properties)) {
+                cache.push({
+                  key: propKey,
+                  description:
+                    SPEC_SCHEMA[key].properties[propKey].description || null,
+                  type: SPEC_SCHEMA[key].properties[propKey].type || null,
+                });
+              }
+              return cache;
+            }
+          });
+          const specProperties = doc[lvl1];
+          const builder = [];
+          for (const prop in specProperties) {
+            for (const keyword of keywords.values()) {
+              if (keyword?.key === prop) {
+                if (keyword?.type === "string" || keyword?.type === "integer") {
+                  builder.push({
+                    schemaConfig: {
+                      parents: [lvl1],
+                      key: prop,
+                      values: Array.isArray(specProperties[prop])
+                        ? specProperties[prop]
+                        : [specProperties[prop]],
+                    },
+                    identifier: `${lvl1.toUpperCase()}_${prop.toUpperCase()}_CHECK`,
+                    defaultMessageOnFailure: `Failed ${lvl1.toUpperCase()}_${prop.toUpperCase()}_CHECK\n${
+                      keyword.description &&
+                      `Description: ${keyword.description}`
+                    }`,
+                  });
+                }
+                if (keyword.type)
+                  // Keeping only the first type of 'property' inside datree policy rules
+                  break;
               }
             }
           }

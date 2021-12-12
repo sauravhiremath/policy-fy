@@ -8,7 +8,7 @@ import { parser } from "./parser";
 const program = new Command();
 program.version("1.0.0");
 program.option(
-  "-f, --filename",
+  "-f, --filename <type>",
   "filename of k8 config only (Don't add path). Ex: sample4.yml"
 );
 program.parse(process.argv);
@@ -31,7 +31,7 @@ function main() {
     const parsedPolicyCtx = parser(doc);
     buildYaml({ ...parsedPolicyCtx }, `${filename}-policy-gen.yml`);
     consola.success(
-      `Successfully generated Datree policy! @ ./output/${filename}`
+      `Successfully generated Datree policy! Location -> ./output/${filename}`
     );
   } catch (e: any) {
     console.log(e.message);

@@ -17,7 +17,7 @@ function main() {
   try {
     const { filename } = program.opts();
     if (!filename) {
-      consola.error("Enter k8 filename to generate Datree policy!");
+      consola.error("K8 yaml filename not specified!");
       return;
     }
     const doc = yaml.load(

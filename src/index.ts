@@ -1,6 +1,22 @@
-import * as yaml from "yaml-ast-parser";
+import yaml from "js-yaml";
 import { buildYaml } from "./utils";
 import fs from "fs";
+import { parser } from "./parser";
+
+export const basePolicy = {
+  apiVersion: "v1",
+  policies: [
+    {
+      name: "policy1",
+      isDefault: true,
+      rules: {
+        identifier: "CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS",
+        messageOnFailure: "Failed CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS",
+      },
+    },
+  ],
+  customRules: [],
+};
 
 // Get document, or throw exception on error
 try {
@@ -9,20 +25,7 @@ try {
   );
   // console.log(doc);
   // fs.writeFileSync(util.inspect(doc), "./dump/sample1.dump.json");
-  const base = {
-    apiVersion: "v1",
-    policies: [
-      {
-        name: "policy1",
-        isDefault: true,
-        rules: {
-          identifier: "CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS",
-          messageOnFailure:
-            "Failed CUSTOM_WORKLOAD_INCORRECT_ENVIRONMENT_LABELS",
-        },
-      },
-    ],
-  };
+
   const context = {
     customRules: [
       {
@@ -49,7 +52,8 @@ try {
       },
     ],
   };
-  buildYaml({ ...base, ...context }, "sample1-policy.yml");
+  const parsedPolicyCtx = parser(doc);
+  buildYaml({ ...parsedPolicyCtx }, "sample1-policy-gen.yml");
   // for (const key in doc) {
   //   console.log(doc.);
   // }

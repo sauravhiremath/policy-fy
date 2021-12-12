@@ -5,7 +5,7 @@ Our CLI tool takes in a Kubernetes config file, parses it using our custom Gener
 
 **Features**
 
-- Parsing YAML config properties
+- Parsing YAML config properties upto 3 levels
 - Support for Resource Limits. Ex: maximum: 25
 - Supports enums, string and limit values
 

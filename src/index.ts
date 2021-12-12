@@ -28,10 +28,16 @@ function main() {
     //   __dirname + "/../output/sample1.dump.json",
     //   JSON.stringify(doc)
     // );
-    const parsedPolicyCtx = parser(doc);
-    buildYaml({ ...parsedPolicyCtx }, `${filename}-policy-gen.yml`);
+    const parsedPolicyCtx = parser(doc, filename.replace(".yml", ""));
+    buildYaml(
+      { ...parsedPolicyCtx },
+      `${filename.replace(".yml", "")}-policy-gen.yml`
+    );
     consola.success(
-      `Successfully generated Datree policy! Location -> ./output/${filename}`
+      `Successfully generated Datree policy! Location -> ./output/${filename.replace(
+        ".yml",
+        ""
+      )}`
     );
   } catch (e: any) {
     console.log(e.message);

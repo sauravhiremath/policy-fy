@@ -6,7 +6,7 @@ const lvl1 = ["apiVersion", "kind", "metadata", "spec"];
 const METADATA_SCHEMA: any = metadataSchema;
 const SPEC_SCHEMA: any = specSchema;
 
-export const getBasePolicy = (ctx: any) => {
+export const getBasePolicy = (ctx: any, filename: string) => {
   const identifiers: Array<string> = ctx.customRules.map(
     ({ identifier }: { identifier: string }) => identifier
   );
@@ -14,7 +14,7 @@ export const getBasePolicy = (ctx: any) => {
     apiVersion: "v1",
     policies: [
       {
-        name: "autogen-pass-sample1",
+        name: `autogen_pass_${filename}`,
         isDefault: true,
         rules: identifiers.map((v) => ({
           identifier: v,
@@ -25,7 +25,7 @@ export const getBasePolicy = (ctx: any) => {
   };
 };
 
-export function parser(doc: any) {
+export function parser(doc: any, filename: string) {
   const policy: any = { customRules: [] };
   // First lvl parse
   const lvl1Props = baselvl.properties;
@@ -163,7 +163,7 @@ export function parser(doc: any) {
       }
     }
   }
-  return { ...getBasePolicy(policy), ...policy };
+  return { ...getBasePolicy(policy, filename), ...policy };
 }
 
 // ctx = [{ key, values }, { key, values }, {}]

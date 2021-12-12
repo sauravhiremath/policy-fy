@@ -99,6 +99,8 @@ __metadata:
   dependencies:
     "@types/js-yaml": ^4.0.5
     "@types/node": ^16.11.12
+    commander: ^8.3.0
+    consola: ^2.15.3
     js-yaml: ^4.1.0
     mkdirp: ^1.0.4
     ts-node: ^10.4.0
@@ -106,6 +108,20 @@ __metadata:
     yaml-ast-parser: ^0.0.43
   languageName: unknown
   linkType: soft
+
+"commander@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "commander@npm:8.3.0"
+  checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
+  languageName: node
+  linkType: hard
+
+"consola@npm:^2.15.3":
+  version: 2.15.3
+  resolution: "consola@npm:2.15.3"
+  checksum: 8ef7a09b703ec67ac5c389a372a33b6dc97eda6c9876443a60d76a3076eea0259e7f67a4e54fd5a52f97df73690822d090cf8b7e102b5761348afef7c6d03e28
+  languageName: node
+  linkType: hard
 
 "create-require@npm:^1.1.0":
   version: 1.1.1

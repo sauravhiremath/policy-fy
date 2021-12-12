@@ -1,12 +1,27 @@
+import { Command } from "commander";
+import consola from "consola";
 import yaml from "js-yaml";
 import { buildYaml } from "./utils";
 import fs from "fs";
 import { parser } from "./parser";
 
-function main(args: string[]) {
+const program = new Command();
+program.version("1.0.0");
+program.option(
+  "-f, --filename",
+  "filename of k8 config only (Don't add path). Ex: sample4.yml"
+);
+program.parse(process.argv);
+
+function main() {
   try {
+    const { filename } = program.opts();
+    if (!filename) {
+      consola.error("Enter k8 filename to generate Datree policy!");
+      return;
+    }
     const doc = yaml.load(
-      fs.readFileSync(__dirname + "/../k8/sample4.yml", "utf8")
+      fs.readFileSync(__dirname + `/../k8/${filename}`, "utf8")
     );
     // console.log(doc);
     // fs.writeFileSync(
@@ -14,10 +29,13 @@ function main(args: string[]) {
     //   JSON.stringify(doc)
     // );
     const parsedPolicyCtx = parser(doc);
-    buildYaml({ ...parsedPolicyCtx }, "sample4-policy-gen.yml");
+    buildYaml({ ...parsedPolicyCtx }, `${filename}-policy-gen.yml`);
+    consola.success(
+      `Successfully generated Datree policy! @ ./output/${filename}`
+    );
   } catch (e: any) {
     console.log(e.message);
   }
 }
 
-main([]);
+main();

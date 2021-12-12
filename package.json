@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.1.1",
   "scripts": {
     "postinstall": "mkdirp output",
-    "dev": "yarn run ts-node src/index.ts"
+    "generate": "yarn run ts-node src/index.ts"
   },
   "dependencies": {
     "commander": "^8.3.0",

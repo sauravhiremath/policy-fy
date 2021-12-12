@@ -168,7 +168,7 @@ export function parser(doc: any) {
 
 // ctx = [{ key, values }, { key, values }, {}]
 export function buildSchema(
-  ctx: { key: string; values: Array<string> },
+  ctxUpper: { key: string; values: Array<string> },
   parents: Array<string>
 ) {
   const buildParentProperties = (
@@ -177,7 +177,24 @@ export function buildSchema(
     ctx: any
   ) => {
     if (parents.length <= 0) {
-      return { properties: ctx };
+      if (ctx[ctxUpper.key].enumOrRange.length === 1) {
+        if (!isNaN(ctx[ctxUpper.key].enumOrRange[0])) {
+          return {
+            properties: {
+              [ctxUpper.key]: {
+                maximum: ctxUpper.values[0],
+              },
+            },
+          };
+        }
+      }
+      return {
+        properties: {
+          [ctxUpper.key]: {
+            enum: ctxUpper.values,
+          },
+        },
+      };
     }
     for (const parent of parents) {
       build.properties = {
@@ -192,7 +209,7 @@ export function buildSchema(
   };
   let build: any = {};
   build = buildParentProperties(parents, build, {
-    [ctx.key]: { enum: [...ctx.values] },
+    [ctxUpper.key]: { enumOrRange: [...ctxUpper.values] },
   });
   return build;
 }

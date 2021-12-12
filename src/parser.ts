@@ -6,6 +6,14 @@ const lvl1 = ["apiVersion", "kind", "metadata", "spec"];
 const METADATA_SCHEMA: any = metadataSchema;
 const SPEC_SCHEMA: any = specSchema;
 
+/**
+ * Builds the base Datree policy for custom rules publishing.
+ * Can be extended manually as required.
+ *
+ * @param ctx Yaml.Node
+ * @param filename string
+ * @returns BasePolicy
+ */
 export const getBasePolicy = (ctx: any, filename: string) => {
   const identifiers: Array<string> = ctx.customRules.map(
     ({ identifier }: { identifier: string }) => identifier
@@ -25,6 +33,19 @@ export const getBasePolicy = (ctx: any, filename: string) => {
   };
 };
 
+/**
+ * Parse the given k8 yml configuration to generate Datree Policy
+ * **Features**
+ *   - Parsing YAML config properties
+ *   - Support for Resource Limits. Ex: maximum: 25
+ *   - Supports enums, string and limit values
+ *
+ * Schemas Used - index.json, metadata.json, spec.json
+ *
+ * @param doc Yaml.Node
+ * @param filename string
+ * @returns YamlJSON
+ */
 export function parser(doc: any, filename: string) {
   const policy: any = { customRules: [] };
   // First lvl parse
@@ -73,6 +94,7 @@ export function parser(doc: any, filename: string) {
           for (const prop in metadataProperties) {
             for (const keyword of keywords.values()) {
               if (keyword?.key === prop) {
+                // v2: Can be extended to support for `objects` by just calling this function again
                 if (keyword?.type === "string" || keyword?.type === "integer") {
                   builder.push({
                     schemaConfig: {
@@ -91,7 +113,7 @@ export function parser(doc: any, filename: string) {
                   });
                 }
                 if (keyword.type)
-                  // Keeping only the first type of 'property' inside datree policy rules
+                  // Note: Keeping only the first type of 'property' inside datree policy rules
                   break;
               }
             }
@@ -166,7 +188,14 @@ export function parser(doc: any, filename: string) {
   return { ...getBasePolicy(policy, filename), ...policy };
 }
 
-// ctx = [{ key, values }, { key, values }, {}]
+/**
+ * Recursive Generative Algorithm to build nested properties
+ * Also supports value ranges like maximum and minimum in datree policy
+ *
+ * @param ctxUpper { key: string, values: Array<string> }
+ * @param parents Array<string>
+ * @returns Datree Schema
+ */
 export function buildSchema(
   ctxUpper: { key: string; values: Array<string> },
   parents: Array<string>

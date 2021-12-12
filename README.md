@@ -1,7 +1,8 @@
 # cloudnativehack
 
-## Roadmap
+## Dev setup
 
-- Convert yml file to json
-- Merge multiple source of truth json files in one
-- Create policies based on it
+- Pre-requisites: `yarn` package manager, `nodejs`
+- Run `yarn install`
+- Run `yarn generate` to create Datree policy for supplied kubernetes config file
+  - Example: `yarn generate -f sample4.yml`

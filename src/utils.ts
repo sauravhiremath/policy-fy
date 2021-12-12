@@ -19,7 +19,7 @@ export function mergeJson(target: any) {
 export function buildYaml(
   ctx: Object,
   filename: string,
-  basePath = __dirname + "/../dump"
+  basePath = __dirname + "/../output"
 ) {
   const data = yml.dump(ctx);
   fs.writeFileSync(`${basePath}/${filename}`, data);
